@@ -1,7 +1,8 @@
-import Head from 'next/head';
-import React from 'react';
-import styles from '../styles/Layout.module.css';
-import Header from './Header';
+import Head from "next/head";
+import React from "react";
+import styles from "../styles/Layout.module.css";
+import Footer from "./Footer";
+import Header from "./Header";
 
 interface LayoutProps {
   title?: string;
@@ -11,9 +12,9 @@ interface LayoutProps {
 }
 
 const DefaultProps: LayoutProps = {
-  title: 'DJ Events',
-  keywords: 'music, dj, edm, events',
-  description: 'Find the latest DJ and other musical events',
+  title: "DJ Events",
+  keywords: "music, dj, edm, events",
+  description: "Find the latest DJ and other musical events",
 };
 
 export default function Layout({
@@ -31,6 +32,7 @@ export default function Layout({
       </Head>
       <Header />
       <div className={styles.container}>{children}</div>
+      <Footer />
     </div>
   );
 }
