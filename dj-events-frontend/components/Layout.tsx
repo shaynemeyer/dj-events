@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import styles from "../styles/Layout.module.css";
+import styles from "@/styles/Layout.module.css";
 import Footer from "./Footer";
 import Header from "./Header";
 
