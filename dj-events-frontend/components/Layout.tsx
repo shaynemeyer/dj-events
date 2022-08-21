@@ -10,7 +10,7 @@ interface LayoutProps {
   title?: string;
   description?: string;
   keywords?: string;
-  children?: JSX.Element | JSX.Element[];
+  children?: JSX.Element | JSX.Element[] | string[];
 }
 
 const DefaultProps: LayoutProps = {
