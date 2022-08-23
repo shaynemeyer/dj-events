@@ -1,13 +1,12 @@
-import React, { AnchorHTMLAttributes } from "react";
-import Layout from "@/components/Layout";
-import { DJEvent } from "@/models/event";
-import { API_URL } from "@/config/index";
-import { GetServerSidePropsContext } from "next";
-import { ParsedUrlQuery } from "querystring";
-import styles from "@/styles/Event.module.css";
-import Link from "next/link";
-import { FaPencilAlt, FaTimes } from "react-icons/fa";
-import Image from "next/image";
+import Layout from '@/components/Layout';
+import { DJEvent } from '@/models/event';
+import { API_URL } from '@/config/index';
+import { GetServerSidePropsContext } from 'next';
+import { ParsedUrlQuery } from 'querystring';
+import styles from '@/styles/Event.module.css';
+import Link from 'next/link';
+import { FaPencilAlt, FaTimes } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface EventPageProps {
   event: DJEvent;
@@ -15,7 +14,7 @@ interface EventPageProps {
 
 export default function EventPage({ event }: EventPageProps) {
   const deleteEvent = (e: React.MouseEvent<HTMLElement>) => {
-    console.log("delete", e);
+    console.log('delete', e);
   };
 
   return (
@@ -27,31 +26,36 @@ export default function EventPage({ event }: EventPageProps) {
               <a>
                 <FaPencilAlt /> Edit Event
               </a>
-            </Link>{" "}
+            </Link>{' '}
             <a href="#" onClick={deleteEvent}>
               <FaTimes /> Delete Event
             </a>
           </div>
         </div>
         <span>
-          {event.date} at {event.time}
+          {event.attributes.date} at {event.attributes.time}
         </span>
-        <h1>{event.name}</h1>
-        {event.image && (
+        <h1>{event.attributes.name}</h1>
+        {event.attributes.image.data && (
           <div className={styles.image}>
-            <Image src={event.image} width={960} height={600} />
+            <Image
+              src={event.attributes.image.data.attributes.url}
+              alt={event.attributes.image.data.attributes.alternativeText}
+              width={960}
+              height={600}
+            />
           </div>
         )}
         <h3>Performers:</h3>
-        <p>{event.performers}</p>
+        <p>{event.attributes.performers}</p>
 
         <h3>Description:</h3>
-        <p>{event.description}</p>
+        <p>{event.attributes.description}</p>
         <h3>Venue:</h3>
-        <p>{event.venue}</p>
+        <p>{event.attributes.venue}</p>
 
         <Link href="/events">
-          <a className={styles.back}>{"<"} Go Back</a>
+          <a className={styles.back}>{'<'} Go Back</a>
         </Link>
       </div>
     </Layout>
@@ -60,10 +64,10 @@ export default function EventPage({ event }: EventPageProps) {
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const { slug } = ctx.params as ParsedUrlQuery;
-  const res = await fetch(`${API_URL}/api/events/${slug}`);
-  const event: DJEvent = await res.json();
+  const res = await fetch(`${API_URL}/api/events/?slug=${slug}&populate=*`);
+  const { data: event }: { data: DJEvent[] } = await res.json();
 
   return {
-    props: { event },
+    props: { event: event[0] },
   };
 }

@@ -1,12 +1,10 @@
-import type { NextPage, InferGetServerSidePropsType } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import Layout from "@/components/Layout";
-import { API_URL } from "@/config/index";
-import { DJEvent } from "@/models/event";
-import styles from "@/styles/Home.module.css";
-import EventItem from "@/components/EventItem";
-import Link from "next/link";
+import type { NextPage, InferGetServerSidePropsType } from 'next';
+import Layout from '@/components/Layout';
+import { API_URL } from '@/config/index';
+import { DJEvent } from '@/models/event';
+import styles from '@/styles/Home.module.css';
+import EventItem from '@/components/EventItem';
+import Link from 'next/link';
 
 interface HomePageProps {
   events: DJEvent[];
@@ -15,14 +13,13 @@ interface HomePageProps {
 const HomePage: NextPage<HomePageProps> = ({
   events,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  // console.log({ events });
   return (
     <Layout>
       <>
         <h1>Upcoming Events</h1>
         {events.length === 0 && <h3>No events to show.</h3>}
 
-        {events.map((evt) => (
+        {events.map((evt: DJEvent) => (
           <EventItem key={evt.id} event={evt} />
         ))}
 
@@ -37,11 +34,13 @@ const HomePage: NextPage<HomePageProps> = ({
 };
 
 export async function getServerSideProps() {
-  const res = await fetch(`${API_URL}/api/events`);
-  const events: DJEvent[] = await res.json();
+  const res = await fetch(
+    `${API_URL}/api/events?_sort=date:ASC&_limit=3&populate=*`
+  );
+  const { data: events }: { data: DJEvent[] } = await res.json();
 
   return {
-    props: { events: events.slice(0, 3) },
+    props: { events },
   };
 }
 
