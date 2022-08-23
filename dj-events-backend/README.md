@@ -1,6 +1,6 @@
 # DJ Events Backend
 
-Strapi comes with a full featured which lets you scaffold and manage your project in seconds.
+A Backend app made with `create-strapi-app`
 
 ## `develop`
 
