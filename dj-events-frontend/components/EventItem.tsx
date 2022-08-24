@@ -9,7 +9,6 @@ interface EventItemProps {
 }
 
 export default function EventItem({ event }: EventItemProps): JSX.Element {
-  console.log(JSON.stringify(event));
   return (
     <div className={styles.event}>
       <div className={styles.img}>

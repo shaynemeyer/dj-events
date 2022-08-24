@@ -22,7 +22,7 @@ export default function EventsPage({ events }: EventsPageProps) {
 }
 
 export async function getServerSideProps() {
-  const res = await fetch(`${API_URL}/api/events?populate=*`);
+  const res = await fetch(`${API_URL}/api/events?_sort=date:ASC&populate=*`);
   const { data: events }: { data: DJEvent[] } = await res.json();
 
   return {
