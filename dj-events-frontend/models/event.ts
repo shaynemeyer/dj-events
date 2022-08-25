@@ -15,23 +15,25 @@ export type DJEvent = {
     date: string;
     time: string;
     description: string;
-    image: {
-      data: {
-        id: string;
-        attributes: {
-          name: string;
-          alternativeText: string;
-          width: number;
-          height: number;
-          formats: {
-            thumbnail: ImageFormat;
-            large: ImageFormat;
-            medium: ImageFormat;
-            small: ImageFormat;
-          };
-          url: string;
-        };
-      };
-    };
+    image: EventImage;
   };
 };
+
+export interface EventImage {
+  data: {
+    id: string;
+    attributes: {
+      name: string;
+      alternativeText: string;
+      width: number;
+      height: number;
+      formats: {
+        thumbnail: ImageFormat;
+        large: ImageFormat;
+        medium: ImageFormat;
+        small: ImageFormat;
+      };
+      url: string;
+    };
+  };
+}

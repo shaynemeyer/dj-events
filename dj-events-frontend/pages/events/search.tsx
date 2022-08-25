@@ -66,7 +66,7 @@ export async function getServerSideProps({
 
   const res = await fetch(`${API_URL}/api/events?${query}&populate=*`);
   const { data: events }: { data: DJEvent[] } = await res.json();
-  console.log(JSON.stringify(events));
+
   return {
     props: { events },
   };

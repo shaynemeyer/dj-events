@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Layout from '@/components/Layout';
 import { DJEvent } from '@/models/event';
 import { API_URL } from '@/config/index';
@@ -7,14 +9,29 @@ import styles from '@/styles/Event.module.css';
 import Link from 'next/link';
 import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 interface EventPageProps {
   event: DJEvent;
 }
 
 export default function EventPage({ event }: EventPageProps) {
-  const deleteEvent = (e: React.MouseEvent<HTMLElement>) => {
-    console.log('delete', e);
+  const router = useRouter();
+
+  const deleteEvent = async (e: React.MouseEvent<HTMLElement>) => {
+    if (confirm('Are you sure you want to delete this event?')) {
+      const res = await fetch(`${API_URL}/api/events/${event.id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message);
+      } else {
+        router.push('/events');
+      }
+    }
   };
 
   return (
@@ -33,7 +50,8 @@ export default function EventPage({ event }: EventPageProps) {
           </div>
         </div>
         <span>
-          {event.attributes.date} at {event.attributes.time}
+          {new Date(event.attributes.date).toLocaleDateString('en-US')} at{' '}
+          {event.attributes.time}
         </span>
         <h1>{event.attributes.name}</h1>
         {event.attributes.image.data && (
@@ -46,6 +64,7 @@ export default function EventPage({ event }: EventPageProps) {
             />
           </div>
         )}
+        <ToastContainer />
         <h3>Performers:</h3>
         <p>{event.attributes.performers}</p>
 
@@ -64,7 +83,9 @@ export default function EventPage({ event }: EventPageProps) {
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const { slug } = ctx.params as ParsedUrlQuery;
-  const res = await fetch(`${API_URL}/api/events/?slug=${slug}&populate=*`);
+  const res = await fetch(
+    `${API_URL}/api/events?filters[slug][$eq]=${slug}&populate=*`
+  );
   const { data: event }: { data: DJEvent[] } = await res.json();
 
   return {
