@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { API_URL } from '../config';
+import { NEXT_URL } from '../config';
 
 interface User {
   username: string;
@@ -41,7 +41,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   // login user
   const login = async ({ email: identifier, password }: LoginUser) => {
-    console.log({ identifier, password });
+    const res = await fetch(`${NEXT_URL}/api/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        identifier,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+
+    setError(null);
+
+    if (res.ok) {
+      setUser(data.user);
+    } else {
+      setError(data.message);
+    }
   };
 
   // logout user
