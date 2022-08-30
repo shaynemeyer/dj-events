@@ -35,6 +35,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    checkUserLoginIn();
+  }, []);
+
   // register user
   const register = async (user: User) => {
     console.log({ user });
@@ -58,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (res.ok) {
       setUser(data.user);
+      router.push('/account/dashboard');
     } else {
       setError(data.message);
     }
@@ -65,12 +72,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // logout user
   const logout = async () => {
-    console.log('Logout');
+    const res = await fetch(`${NEXT_URL}/api/logout`, {
+      method: 'POST',
+    });
+
+    if (res.ok) {
+      setUser(null);
+      router.push('/');
+    }
   };
 
   // check if user is logged in
-  const checkUserLoginIn = async (user: LoginUser) => {
-    console.log('Check User Login');
+  const checkUserLoginIn = async () => {
+    const res = await fetch(`${NEXT_URL}/api/user`);
+    const data = await res.json();
+
+    if (res.ok) {
+      setUser(data.user);
+    } else {
+      setUser(null);
+    }
   };
 
   return (
