@@ -43,7 +43,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // register user
   const register = async (user: User) => {
-    console.log({ user });
+    const res = await fetch(`${NEXT_URL}/api/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+
+    const data = await res.json();
+
+    setError(null);
+
+    if (res.ok) {
+      setUser(data.user);
+      router.push('/account/dashboard');
+    } else {
+      setError(data.message);
+    }
   };
   // login user
   const login = async ({ email: identifier, password }: LoginUser) => {
