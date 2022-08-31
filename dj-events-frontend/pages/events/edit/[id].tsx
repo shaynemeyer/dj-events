@@ -8,13 +8,13 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext, NextApiRequest } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import { DJEvent, EventImage } from '@/models/event';
 import format from 'date-fns/format';
 import Image from 'next/image';
 import ImageUpload from '@/components/ImageUpload';
-
+import { parseCookies } from '@/helpers/index';
 interface EventValues {
   id?: number;
   name: string;
@@ -29,9 +29,10 @@ interface EventValues {
 
 interface EditEventPageProps {
   evt: EventValues;
+  token: string;
 }
 
-export default function EditEventPage({ evt }: EditEventPageProps) {
+export default function EditEventPage({ evt, token }: EditEventPageProps) {
   const [values, setValues] = React.useState<EventValues>({
     name: evt.name,
     performers: evt.performers,
@@ -65,14 +66,14 @@ export default function EditEventPage({ evt }: EditEventPageProps) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ data: values }),
     });
 
     if (!res.ok) {
       if (res.status === 403 || res.status === 401) {
-        toast.error('No token included');
+        toast.error('Unauthorized!');
         return;
       }
       toast.error('Something Went Wrong');
@@ -208,6 +209,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const res = await fetch(
     `${API_URL}/api/events?filters[id][$eq]=${id}&populate=*`
   );
+  const { token } = parseCookies(ctx.req as NextApiRequest);
+  console.log({ token });
   const { data: event }: { data: DJEvent[] } = await res.json();
   const { name, performers, venue, address, date, time, description, image } =
     event[0].attributes;
@@ -224,6 +227,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         description,
         image,
       },
+      token,
     },
   };
 }
