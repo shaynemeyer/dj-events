@@ -4,19 +4,21 @@ import styles from '@/styles/Form.module.css';
 
 interface ImageUploadProps {
   evtId: string;
+  token: string;
   imageUploaded: () => void;
 }
 
 export default function ImageUpload({
   evtId,
   imageUploaded,
+  token,
 }: ImageUploadProps) {
   const [image, setImage] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('files', image);
+    formData.append('files', image as Blob);
     formData.append('ref', 'api::event.event');
     formData.append('refId', evtId);
     formData.append('field', 'image');
@@ -24,9 +26,9 @@ export default function ImageUpload({
 
     const res = await fetch(`${API_URL}/api/upload?populate=*`, {
       method: 'POST',
-      // headers: {
-      //   Authorization: `Bearer ${token}`,
-      // },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: formData,
     });
 
