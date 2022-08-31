@@ -65,8 +65,8 @@ export default function AddEventPage({ token }: AddEventPageProps) {
       }
       toast.error('Something Went Wrong');
     } else {
-      const { data } = await res.json();
-      router.push(`/events/${data.attributes.slug}`);
+      const { slug } = await res.json();
+      router.push(`/events/${slug}`);
     }
   };
 
@@ -163,7 +163,7 @@ export default function AddEventPage({ token }: AddEventPageProps) {
 }
 
 export async function getServerSideProps({ req }: { req: NextApiRequest }) {
-  const token = parseCookies(req);
+  const { token } = parseCookies(req);
 
   return {
     props: {

@@ -32,10 +32,21 @@ module.exports = createCoreController("api::event.event", ({ strapi }) => ({
   },
   // Create user event----------------------------------------
   async create(ctx) {
-    let entity;
-    ctx.request.body.data.user = ctx.state.user;
-    entity = await super.create(ctx);
-    return entity;
+    const user = ctx.state.user;
+
+    const evt = await super.create(ctx);
+
+    const updated = await strapi.entityService.update(
+      "api::event.event",
+      evt.data.id,
+      {
+        data: {
+          user: user.id,
+        },
+      }
+    );
+
+    return updated;
   },
 
   // Update user event----------------------------------------
@@ -60,7 +71,8 @@ module.exports = createCoreController("api::event.event", ({ strapi }) => ({
   },
   // Delete a user event----------------------------------------
   async delete(ctx) {
-    const { id } = ctx.req.params;
+    console.log("Context", JSON.stringify(ctx));
+    const { id } = ctx.params;
     const query = {
       filters: {
         id: id,

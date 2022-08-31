@@ -1,4 +1,4 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from '@/components/Layout';
 import { DJEvent } from '@/models/event';
@@ -7,48 +7,17 @@ import { GetServerSidePropsContext } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import styles from '@/styles/Event.module.css';
 import Link from 'next/link';
-import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
 interface EventPageProps {
   event: DJEvent;
 }
 
 export default function EventPage({ event }: EventPageProps) {
-  const router = useRouter();
-
-  const deleteEvent = async (e: React.MouseEvent<HTMLElement>) => {
-    if (confirm('Are you sure you want to delete this event?')) {
-      const res = await fetch(`${API_URL}/api/events/${event.id}`, {
-        method: 'DELETE',
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message);
-      } else {
-        router.push('/events');
-      }
-    }
-  };
-
   return (
     <Layout>
       <div>
-        <div className={styles.event}>
-          <div className={styles.controls}>
-            <Link href={`/events/edit/${event.id}`}>
-              <a>
-                <FaPencilAlt /> Edit Event
-              </a>
-            </Link>{' '}
-            <a href="#" onClick={deleteEvent}>
-              <FaTimes /> Delete Event
-            </a>
-          </div>
-        </div>
+        <div className={styles.event}></div>
         <span>
           {new Date(event.attributes.date).toLocaleDateString('en-US')} at{' '}
           {event.attributes.time}
@@ -64,7 +33,7 @@ export default function EventPage({ event }: EventPageProps) {
             />
           </div>
         )}
-        <ToastContainer />
+
         <h3>Performers:</h3>
         <p>{event.attributes.performers}</p>
 
