@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { parseCookies } from '@/helpers/index';
+import { NextApiRequest } from 'next';
 interface FormValues {
   name: string;
   performers: string;
@@ -26,7 +28,11 @@ const formDefaults: FormValues = {
   description: '',
 };
 
-export default function AddEventPage() {
+interface AddEventPageProps {
+  token: string;
+}
+
+export default function AddEventPage({ token }: AddEventPageProps) {
   const [values, setValues] = React.useState<FormValues>(formDefaults);
 
   const router = useRouter();
@@ -47,7 +53,7 @@ export default function AddEventPage() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ data: values }),
     });
@@ -154,4 +160,14 @@ export default function AddEventPage() {
       </form>
     </Layout>
   );
+}
+
+export async function getServerSideProps({ req }: { req: NextApiRequest }) {
+  const token = parseCookies(req);
+
+  return {
+    props: {
+      token,
+    },
+  };
 }
